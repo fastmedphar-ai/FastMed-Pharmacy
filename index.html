@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FastMed POS</title>
+<meta name="theme-color" content="#2446A0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="FastMed POS">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icons/favicon.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<style>
+  html,body{margin:0;height:100%;background:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  iframe{position:fixed;inset:0;width:100%;height:100%;border:0;display:block}
+  #splash,#offline{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:#fff;color:#2446A0;text-align:center;padding:16px}
+  #splash img,#offline img{width:120px;height:120px}
+  .bar{width:140px;height:4px;border-radius:2px;background:#e6ecf7;overflow:hidden}
+  .bar::after{content:"";display:block;width:40%;height:100%;background:#43B047;animation:s 1.1s ease-in-out infinite}
+  @keyframes s{0%{transform:translateX(-100%)}100%{transform:translateX(260%)}}
+  #offline{display:none}
+  button{font:inherit;padding:10px 20px;border:0;border-radius:8px;background:#2446A0;color:#fff;cursor:pointer}
+  small{color:#666}
+</style>
+</head>
+<body>
+<div id="splash"><img src="icons/icon-512.png" alt=""><strong>FastMed POS</strong><div class="bar"></div></div>
+<div id="offline"><img src="icons/icon-512.png" alt=""><strong>No internet connection</strong><small>The POS needs internet to reach Google Sheets.</small><button onclick="location.reload()">Try again</button></div>
+
+<script>
+  // Your Apps Script web app URL (ends in /exec)
+  const APP_URL = 'https://script.google.com/macros/s/AKfycbyv94YFBglncZB-pRXDpZ28Y7loXLGYafCZ-zk6dLwwqxoPWGxCSQ7SSEURgYeojwBK/exec';
+
+  const splash = document.getElementById('splash');
+  const offline = document.getElementById('offline');
+
+  function load() {
+    if (!navigator.onLine) { splash.style.display = 'none'; offline.style.display = 'flex'; return; }
+    const f = document.createElement('iframe');
+    f.src = APP_URL;
+    f.allow = 'camera; clipboard-read; clipboard-write; fullscreen';
+    f.onload = () => { splash.style.display = 'none'; };
+    document.body.appendChild(f);
+    setTimeout(() => { splash.style.display = 'none'; }, 15000);
+  }
+  window.addEventListener('online', () => location.reload());
+  load();
+
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+</script>
+</body>
+</html>
